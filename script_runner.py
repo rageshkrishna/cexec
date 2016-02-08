@@ -14,7 +14,7 @@ class ScriptRunner(Base):
         self.script_dir = self.config['HOME']
         self.script_name = '{0}/{1}.sh'.format(self.script_dir, uuid.uuid4())
         self.job_id = job_id
-        self.shippable_adapter = shippable_adapter;
+        self.shippable_adapter = shippable_adapter
         self.console_buffer = []
         self.console_buffer_lock = threading.Lock()
         self.continue_trigger_flush_console_output = True
@@ -39,8 +39,8 @@ class ScriptRunner(Base):
         run_script_cmd = 'ssh-agent bash -c \'{0} cd {1} && {2}\''.format(
             ssh_add_fragment, self.script_dir, self.script_name)
 
-        script_status, exit_code, should_continue = self._run_command(run_script_cmd,
-            self.script_dir)
+        script_status, exit_code, should_continue = self._run_command(
+            run_script_cmd, self.script_dir)
         self.log.debug('Execute script completed with status: {0}'.format(
             script_status))
         return script_status, exit_code, should_continue
@@ -85,12 +85,12 @@ class ScriptRunner(Base):
         console_flush_timer.start()
 
         self.log.debug('Waiting for command thread to complete')
-        command_thread.join(self.config['MAX_COMMAND_SECONDS'])
+        command_thread.join()
         self.log.debug('Command thread join has returned. Result: {0}'\
                 .format(command_thread_result))
 
         if command_thread.is_alive():
-            self.log.append_command_err('Command timed out')
+            self.append_command_err('Command timed out')
             self.log.error('Command thread is still running')
             is_command_success = False
             current_step_state = self.STATUS['TIMEOUT']
@@ -121,7 +121,7 @@ class ScriptRunner(Base):
         if current_step_state == self.STATUS['TIMEOUT']:
             exit_code = self.STATUS['TIMEOUT']
         else:
-            exit_code=command_thread_result['returncode']
+            exit_code = command_thread_result['returncode']
 
         return current_step_state, exit_code, should_continue
 
